@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity
         nonStaticcontacts = findViewById(R.id.tv_totalContacts);
 
         rvPersonList = findViewById(R.id.rvPersonList);
+
         rvPersonList.setLayoutManager(new LinearLayoutManager(this));
         rvPersonList.addItemDecoration(new DividerItemDecoration(this,
                 DividerItemDecoration.VERTICAL));
@@ -61,22 +63,6 @@ public class MainActivity extends AppCompatActivity
         personList = new ArrayList<>();
         personRoomDB = personRoomDB.getINSTANCE(this);
         loadContact();
-
-        mTelephonyManager = (TelephonyManager) getSystemService(getApplicationContext().TELEPHONY_SERVICE);
-        rvPersonList.setOnLongClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick (View v)
-            {
-                String phoneNo = personList.getText().toString();
-                if (!TextUtils.isEmpty(phoneNo))
-                {
-                    String dial = "tel:" + phoneNo;
-                    // an intent to dial a number
-                    startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse(dial)));
-                }
-            }
-        });
     }
 
 
@@ -114,7 +100,8 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        if (item.getItemId() == R.id.btnSearch){
+        if (item.getItemId() == R.id.btnSearch)
+        {
 //            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 //                @Override
 //                public boolean onQueryTextSubmit(String query) {
@@ -139,7 +126,8 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    private void loadContact() {
+    private void loadContact()
+    {
         personList = personRoomDB.personDao().getAllContacts();
 
         personAdapter = new PersonAdapter(this,R.layout.item_person, personList);
@@ -147,7 +135,34 @@ public class MainActivity extends AppCompatActivity
 
         nonStaticcontacts.setText(String.valueOf(personList.size()));
 
-//        tv_totalContacts.setText(String.valueOf(noOfContacts));
-
     }
+
+    //mTelephonyManager = (TelephonyManager) getSystemService(getApplicationContext().TELEPHONY_SERVICE);
+//        rvPersonList.setOnLongClickListener(new View.OnClickListener()
+//        {
+//            @Override
+//            public void onClick (View v)
+//            {
+//                Person person = personList.get();
+//                String phoneNo = person.getPhoneNumber();
+//                //String phoneNo = personList.get().getText().toString();
+//                if (!TextUtils.isEmpty(phoneNo))
+//                {
+//                    String dial = "tel:" + phoneNo;
+//                    // an intent to dial a number
+//                    startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse(dial)));
+//                }
+//            }
+//        });
+     //   rvPersonList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//    @Override
+//    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id)
+//    {
+//        Person person = personList.get(position);
+//        String newNumber = person.getPhoneNumber();
+//        Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + newNumber));// Initiates the Intent
+//        startActivity(intent);
+//
+//        return true;
+//    }
 }
