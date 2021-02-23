@@ -1,13 +1,3 @@
 <resources>
     <string name="app_name">contact_PalakRandhawa_C0776254_android</string>
-    <string name="add_a_new_contact">Add a new Contact</string>
-    <string name="enter_person_first_name">Enter first name of person</string>
-    <string name="enter_person_last_name">Enter last name of person</string>
-    <string name="enter_person_email">Enter email  address of person</string>
-    <string name="enter_person_address">Enter address of person</string>
-    <string name="enter_person_phone_number">Enter Phone number of person</string>
-    <string name="view_contact">View Contacts</string>
-    <string name="add_contact">Add Contact</string>
-    <string name="edit_contact">Edit Contact</string>
-    <string name="update">Update</string>
 </resources>

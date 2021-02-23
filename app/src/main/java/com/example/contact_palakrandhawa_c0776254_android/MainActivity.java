@@ -1,117 +1,132 @@
 package com.example.contact_palakrandhawa_c0776254_android;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.Toast;
-
-import com.example.contact_palakrandhawa_c0776254_android.util.DatabaseHelper;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
-public class MainActivity extends AppCompatActivity implements  View.OnClickListener
-{
-       // sqLite openHelper instance
-        DatabaseHelper sqLiteDatabase;
-
-        EditText etFirstName,etLastName, etEmail, etAddress, etPhoneNumber;
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState)
-        {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
-
-            etFirstName = findViewById(R.id.et_first_name);
-            etLastName = findViewById(R.id.et_last_name);
-            etEmail = findViewById(R.id.et_email);
-            etAddress = findViewById(R.id.et_address);
-            etPhoneNumber = findViewById(R.id.et_phone_number);
-
-            findViewById(R.id.btn_add_contact).setOnClickListener(this);
-            findViewById(R.id.tv_view_contacts).setOnClickListener(this);
-
-            // initializing the instance of sqLLite openHelper class
-            sqLiteDatabase = new DatabaseHelper(this);
-        }
-
-        @Override
-        public void onClick(View v)
-        {
-            switch (v.getId())
-            {
-                case R.id.btn_add_contact:
-                    addEmployee();
-                    break;
-
-                case R.id.tv_view_contacts:
-                    startActivity(new Intent(this, ContactActivity.class));
-                    break;
-            }
-        }
-
-        private void addEmployee()
-        {
-            String firstname = etFirstName.getText().toString().trim();
-            String lastname = etLastName.getText().toString().trim();
-            String email = etEmail.getText().toString().trim();
-            String address = etAddress.getText().toString().trim();
-            String phoneNumber = etPhoneNumber.getText().toString().trim();
-
-            if (firstname.isEmpty())
-            {
-                etFirstName.setError("name field cannot be empty");
-                etFirstName.requestFocus();
-                return;
-            }
-            if (lastname.isEmpty())
-            {
-                etLastName.setError("name field cannot be empty");
-                etLastName.requestFocus();
-                return;
-            }
-
-            if (email.isEmpty()) {
-                etEmail.setError("salary cannot be empty");
-                etEmail.requestFocus();
-                return;
-            }
-            if (address.isEmpty()) {
-                etAddress.setError("salary cannot be empty");
-                etAddress.requestFocus();
-                return;
-            }
-            if (address.isEmpty()) {
-                etPhoneNumber.setError("salary cannot be empty");
-                etPhoneNumber.requestFocus();
-                return;
-            }
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 
-            // insert employee into database table with the help of database openHelper class
-            if (sqLiteDatabase.addEmployee(firstname, lastname, email, address, Double.valueOf(phoneNumber)))
-                Toast.makeText(this, "Employee Added", Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(this, "Employee NOT Added", Toast.LENGTH_SHORT).show();
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
+
+    public static int noOfContacts;
+    RecyclerView rvPersonList;
+
+    private PersonRoomDB personRoomDB;
+    PersonAdapter personAdapter;
+
+    private SearchView searchView;
+
+    public static TextView tv_totalContacts;
+    TextView nonStaticcontacts;
+
+//    static int noOfContacts;
+
+    List<Person> personList;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        getSupportActionBar().setTitle("Customer List");
+
+        tv_totalContacts = findViewById(R.id.tv_totalContacts);
+        nonStaticcontacts = findViewById(R.id.tv_totalContacts);
+
+        rvPersonList = findViewById(R.id.rvPersonList);
+        rvPersonList.setLayoutManager(new LinearLayoutManager(this));
+        rvPersonList.addItemDecoration(new DividerItemDecoration(this,
+                DividerItemDecoration.VERTICAL));
+        rvPersonList.setAdapter(personAdapter);
+        personList = new ArrayList<>();
+        personRoomDB = personRoomDB.getINSTANCE(this);
+        loadContact();
 
 
-        }
-
-        @Override
-        protected void onRestart()
-        {
-            super.onRestart();
-            etFirstName.setText("");
-            etLastName.setText("");
-            etEmail.setText("");
-            etAddress.setText("");
-            etPhoneNumber.setText("");
-            etPhoneNumber.clearFocus();
-            etFirstName.requestFocus();
-        }
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.mymenu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.btnSearch);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                personAdapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+        return true;
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if (item.getItemId() == R.id.btnAdd){
+
+            Intent intent = new Intent(MainActivity.this, CreateNewContact.class);
+            startActivity(intent);
+
+        }
+
+        if (item.getItemId() == R.id.btnSearch){
+//            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//                @Override
+//                public boolean onQueryTextSubmit(String query) {
+//                    return false;
+//                }
+//                @Override
+//                public boolean onQueryTextChange(String newText) {
+//                    personAdapter.getFilter().filter(newText);
+//                    return false;
+//                }
+//            });
+
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public static void calculateContacts(int value){
+
+        tv_totalContacts.setText(String.valueOf(value));
+
+    }
+
+
+    private void loadContact() {
+        personList = personRoomDB.personDao().getAllContacts();
+
+        personAdapter = new PersonAdapter(this,R.layout.item_person, personList);
+        rvPersonList.setAdapter(personAdapter);
+
+        nonStaticcontacts.setText(String.valueOf(personList.size()));
+
+//        tv_totalContacts.setText(String.valueOf(noOfContacts));
+
+    }
+}
