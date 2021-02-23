@@ -42,14 +42,13 @@ public class CreateNewContact extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onClick(View view) {
-
+    public void onClick(View view)
+    {
         addContact();
-
-
     }
 
-    private void addContact() {
+    private void addContact()
+    {
         String firstName = et_firstName.getText().toString().trim();
         String lastName = et_lastName.getText().toString().trim();
         String email = et_email.getText().toString().trim();
@@ -91,7 +90,7 @@ public class CreateNewContact extends AppCompatActivity implements View.OnClickL
 
         Intent intent = new Intent(CreateNewContact.this, MainActivity.class);
         startActivity(intent);
-//        Toast.makeText(this, "Contact added", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Contact added", Toast.LENGTH_SHORT).show();
     }
 
     @Override
